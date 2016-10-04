@@ -47,6 +47,10 @@ KBUILD_CFLAGS	+= -fno-pic
 KBUILD_CFLAGS	+= $(call cc-option, -mpc-relative-literal-loads)
 KBUILD_AFLAGS	+= $(vdso32)
 
+# Cortex-A53 flags
+KBUILD_CFLAGS	+= $(call cc-option, -mcpu=cortex-a53+crypto+crc)
+KBUILD_CFLAGS	+= $(call cc-option, -mtune=cortex-a53)
+
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
 KBUILD_CPPFLAGS	+= -mbig-endian
 AS		+= -EB
