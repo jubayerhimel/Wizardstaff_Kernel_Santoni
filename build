@@ -1,0 +1,18 @@
+#!/bin/bash
+
+VER=$1
+SUB=$2
+
+rm -f AnyKernel2/zImage
+
+mv arch/arm64/boot/Image.gz-dtb AnyKernel2/zImage
+
+cd AnyKernel2
+
+if [ ! $VER ] && [ ! $SUB ]; then
+	VER=0
+	SUB=0
+fi
+
+zip -r ../../release_santoni/Clarity-v$VER.$SUB-AOSP-O_HM4X.zip *
+
