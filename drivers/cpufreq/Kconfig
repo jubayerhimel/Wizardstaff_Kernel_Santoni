@@ -1,3 +1,4 @@
+
 menu "CPU Frequency scaling"
 
 config CPU_FREQ
@@ -279,6 +280,11 @@ config CPU_FREQ_GOV_SCHED
 
 	  If in doubt, say N.
 
+config CPU_FREQ_GOV_ALUCARD
+        tristate "'alucard' cpufreq governor"
+        depends on CPU_FREQ
+        select CPU_FREQ_GOV_COMMON
+
 config CPU_INPUT_BOOST
 	bool "CPU Input Boost"
 	help
@@ -289,17 +295,33 @@ config CPU_INPUT_BOOST
 	  frame drops are near-zero at the boosted frequencies and power
 	  consumption is minimized at said frequency combination.
 
+if CPU_INPUT_BOOST
+
+config INPUT_BOOST_DURATION_MS
+	int "Input boost duration"
+	default "100"
+	help
+	  Input boost duration in milliseconds.
+
 config WAKE_BOOST_DURATION_MS
 	int "Wake boost duration"
-	depends on CPU_INPUT_BOOST
 	default "1000"
 	help
 	  Wake boost duration in milliseconds.
 
-config CPU_FREQ_GOV_ALUCARD
-	tristate "'alucard' cpufreq governor"
-	depends on CPU_FREQ
-	select CPU_FREQ_GOV_COMMON
+config INPUT_BOOST_FREQ_LP
+	int "Low-power cluster boost freq"
+	default "0"
+	help
+	  Input boost frequency for the low-power CPU cluster.
+
+config INPUT_BOOST_FREQ_PERF
+	int "Performance cluster boost freq"
+	default "0"
+	help
+	  Input boost frequency for the performance CPU cluster.
+
+endif
 
 comment "CPU frequency scaling drivers"
 
