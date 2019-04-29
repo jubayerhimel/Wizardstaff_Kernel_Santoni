@@ -4,7 +4,7 @@
 ## AnyKernel setup
 # begin properties
 properties() { '
-kernel.string=Clarity by rainforce279 @ xda-developers
+kernel.string=Wizardstaff by Gandalf
 do.devicecheck=1
 do.modules=0
 do.cleanup=1
