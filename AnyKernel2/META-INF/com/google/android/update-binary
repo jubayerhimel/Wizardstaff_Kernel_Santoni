@@ -31,15 +31,22 @@ debugging() {
     ;;
   esac;
 }
+unmount_all() {
+  (umount /system;
+  if [ -d /system_root -a ! -f /system/build.prop ]; then
+    umount /system_root;
+  fi;
+  umount /system;
+  umount /vendor;
+  umount /data) 2>/dev/null;
+}
 abort() {
   ui_print "$*";
   debugging;
   if [ ! -f /tmp/anykernel/anykernel.sh -o "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanuponabort 2>/dev/null)" == 1 ]; then
     cleanup;
   fi;
-  umount /system;
-  umount /vendor 2>/dev/null;
-  umount /data 2>/dev/null;
+  unmount_all;
   exit 1;
 }
 
@@ -91,42 +98,81 @@ ui_print " .#&&&&%.                  ###&                   ";
 ui_print "$(file_getprop /tmp/anykernel/anykernel.sh kernel.string)";
 if [ -f /tmp/anykernel/version ]; then
   ui_print " ";
-  ui_print "$(cat /tmp/anykernel/version)";
+  while IFS='' read -r line || $bb [[ -n "$line" ]]; do
+    ui_print "$line";
+  done < /tmp/anykernel/version;
   ui_print " ";
 fi;
-ui_print " ";
-ui_print "AnyKernel2 by osm0sis @ xda-developers";
-ui_print " ";
-ui_print " ";
 
-umount /system 2>/dev/null;
-umount /vendor 2>/dev/null;
+unmount_all;
 mount -o ro -t auto /system;
 mount -o ro -t auto /vendor 2>/dev/null;
 mount /data 2>/dev/null;
 test -f /system/system/build.prop && root=/system;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
-  ui_print "Checking device...";
+  # ui_print "Checking device...";
+  device="$(getprop ro.product.device)";
+  product="$(getprop ro.build.product)";
   for i in 1 2 3 4 5; do
     testname="$(file_getprop /tmp/anykernel/anykernel.sh device.name$i)";
-    if [ "$(getprop ro.product.device)" == "$testname" -o "$(getprop ro.build.product)" == "$testname" ]; then
-      ui_print "$testname";
+    test "$testname" || break;
+    if [ "$device" == "$testname" -o "$product" == "$testname" ]; then
+      # ui_print "$testname";
       match=1;
+      break;
     fi;
   done;
-  ui_print " ";
   if [ "$match" != 1 ]; then
     abort "Unsupported device. Aborting...";
   fi;
+  # ui_print "Checking Android version...";
+  romsdk="$(file_getprop /system/build.prop ro.build.version.sdk)";
+  for i in 1 2; do
+    testsdk="$(file_getprop /tmp/anykernel/anykernel.sh supported.sdk$i)";
+    if [ "$romsdk" == "$testsdk" ]; then
+      # ui_print "sdk$testsdk";
+      matchsdk=1;
+      break;
+    fi;
+  done;
+  ui_print " ";
+  if [ "$matchsdk" != 1 ]; then
+    abort "Unsupported Android version. Aborting...":
+  else
+    ui_print "Android 8.X or 9.X ROM Detected ";
+  fi;
+  if [ "$(file_getprop /system/build.prop ro.treble.enabled)" == "true" ]; then
+    dtb=/tmp/anykernel/treble;
+    ui_print "Treble ROM Detected ";
+  else
+    dtb=/tmp/anykernel/nontreble;
+    ui_print "Non - Treble ROM Detected ";
+  fi;
 fi;
 
-ui_print "Installing...";
+if [ -f /system/system/build.prop ]; then
+  umount /system;
+  umount /system 2>/dev/null;
+  mkdir /system_root 2>/dev/null;
+  mount -o ro -t auto /dev/block/bootdevice/by-name/system /system_root;
+  mount -o bind /system_root/system /system;
+  unset root;
+fi;
+savedpath="$LD_LIBRARY_PATH";
+savedpre="$LD_PRELOAD";
+unset LD_LIBRARY_PATH;
+unset LD_PRELOAD;
+
 for i in $($bb --list); do
   $bb ln -s $bb /tmp/anykernel/bin/$i;
 done;
 if [ $? != 0 -o -z "$(ls /tmp/anykernel/bin)" ]; then
   abort "Recovery busybox setup failed. Aborting...";
+fi;
+cat /tmp/anykernel/kernel/Image.gz $dtb/*.dtb > /tmp/anykernel/Image.gz-dtb;
+if [ $? != "0" ]; then
+  abort "DTB append failed. Aborting...";
 fi;
 PATH="/tmp/anykernel/bin:$PATH" $bb ash /tmp/anykernel/anykernel.sh $2;
 if [ $? != "0" ]; then
@@ -134,28 +180,24 @@ if [ $? != "0" ]; then
 fi;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
-  ui_print " ";
-  ui_print "Pushing modules...";
+ # ui_print " ";
+ # ui_print "Pushing modules...";
   mount -o rw,remount -t auto /system;
   mount -o rw,remount -t auto /vendor 2>/dev/null;
   cd /tmp/anykernel/modules;
   for module in $(find . -name '*.ko'); do
-    case $module in
-      */system/*) modtarget=$root/$module;;
-      *) modtarget=/$module;;
-    esac;
-    if [ ! -e $modtarget ]; then
+    if [ ! -e /$module ]; then
       case $module in
         */vendor/*) mod=vendor;;
         *) mod=system;;
       esac;
     fi;
-    mkdir -p $(dirname $modtarget);
-    $bb cp -rLf $module $modtarget;
-    $bb chown 0:0 $modtarget;
-    $bb chmod 644 $modtarget;
+    mkdir -p $(dirname /$module);
+    $bb cp -rLf $module /$module;
+    $bb chown 0:0 /$module;
+    $bb chmod 644 /$module;
     if [ "$mod" ]; then
-      chcon "u:object_r:${mod}_file:s0" $modtarget;
+      chcon "u:object_r:${mod}_file:s0" /$module;
     fi;
   done;
   cd /tmp/anykernel;
@@ -169,10 +211,10 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanup)" == 1 ]; then
   cleanup;
 fi;
 
-umount /system;
-umount /vendor 2>/dev/null;
-umount /data 2>/dev/null;
-ui_print " ";
-ui_print " ";
+test "$savedpath" && export LD_LIBRARY_PATH="$savedpath";
+test "$savedpre" && export LD_PRELOAD="$savedpre";
+
+unmount_all;
+
 ui_print "Done!";
 ui_print "..............THE PRESTIGE HAS BEGAN...............";
