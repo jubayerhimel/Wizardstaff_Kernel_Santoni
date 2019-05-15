@@ -45,6 +45,13 @@ insert_line fstab.qcom "data        f2fs" before "data        ext4" "/dev/block/
 insert_line fstab.qcom "cache        f2fs" after "data        ext4" "/dev/block/bootdevice/by-name/cache     /cache        f2fs    nosuid,nodev,noatime,inline_xattr,flush_merge,data_flush wait,formattable,check";
 fi;
 # backup_file init.rc;
+
+if [ -f init.spectrum.rc ]; then
+ui_print "Remove other kernel spectrum leftovers"
+rm -f init.spectrum.rc;
+rm -f init.spectrum.sh;
+fi;
+#
 	
 # end ramdisk changes
 
