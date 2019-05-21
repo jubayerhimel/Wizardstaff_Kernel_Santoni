@@ -170,7 +170,7 @@ unsigned char AW87319_Audio_Speaker(void)
 	I2C_write_reg(0x03, 0x05);  // Boost Output Voltage to 8.0V
 	I2C_write_reg(0x04, 0x04);  // Boost Parameter ( inductor coil max current) - boost to 3.25A
 	I2C_write_reg(0x05, 0x0D);  // Class D gain when EN_BOOST is enabled - set it to 24dB
-	I2C_write_reg(0x06, 0x00);  // AGC3_Po output power - Decrease it to 0.5W@8ohm and 0.67@6ohm(for decreasing THD)
+	I2C_write_reg(0x06, 0x01);  // AGC3_Po output power - Decrease it to 0.6W@8ohm and 0.8@6ohm(for decreasing THD)
 	I2C_write_reg(0x07, 0x52);  // AGC3 Attack and release times - shouldn't be touched
 	I2C_write_reg(0x08, 0x28);  // AGC2 Output power-no need to increase + attack times-shouldn't be touched
 	I2C_write_reg(0x09, 0x02);  // AGC1
