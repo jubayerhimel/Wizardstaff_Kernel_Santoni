@@ -1,0 +1,36 @@
+version: v1.0
+name: Builing Wizardstaff Kernel.....
+agent:
+  machine:
+    type: e1-standard-8
+    os_image: ubuntu1804
+blocks:
+  - name: "Skeleton"
+    task:
+      jobs:
+        - name: "compiling"
+          commands:
+            - git config --global user.name "gandalf02"
+            - git config --global user.email "pradeepkumarmusham@gmail.com"
+            - cd $HOME
+            - git clone https://github.com/gandalf02/Wizardstaff_EAS --branch=staging/hmp projectpur --depth=1
+            - git clone https://github.com/kdrag0n/aarch64-elf-gcc compiler
+            - git clone https://github.com/kdrag0n/arm-eabi-gcc 32bit
+            - cd $KERNELDIR
+            - sudo apt-get install -y libfl2 bc
+            - git clone https://github.com/gandalf02/scripts script
+            - bash script/treble.sh
+            - cd $HOME
+      env_vars:
+        - name: APP_ENV
+          value: prod
+        - name: BOT_API_KEY 
+          value: "755373561:AAG2GyTk0miDnYokjfLNSuU5PkU33uCWH9o"
+        - name: ARCH
+          value: arm64
+        - name: CHAT_ID
+          value: "-1001234733695"
+        - name: KERNELNAME
+          value: Wizardstaff
+        - name: KERNELDIR
+          value: /home/semaphore/projectpur
