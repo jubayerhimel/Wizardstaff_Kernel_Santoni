@@ -23,8 +23,8 @@ blocks:
             - bash script/clangscript
             - cd $HOME
       env_vars:
-        - name: APP_ENV
-          value: prod
+        - name: STAFF
+          value: Time
         - name: BOT_API_KEY 
           value: "755373561:AAG2GyTk0miDnYokjfLNSuU5PkU33uCWH9o"
         - name: ARCH
