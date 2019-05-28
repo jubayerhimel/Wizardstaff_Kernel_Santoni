@@ -1,4 +1,4 @@
-ifeq ($(CONFIG_ARCH_MSM8940_XIAOMI_SANTONI_DTB),y)
+ifeq ($(CONFIG_MACH_XIAOMI_SANTONI),y)
 dtb-y += xiaomi-santoni-treble.dtb
 dtb-y += xiaomi-santoni.dtb
 else
