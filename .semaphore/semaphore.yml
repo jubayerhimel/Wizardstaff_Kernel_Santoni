@@ -13,7 +13,7 @@ blocks:
             - git config --global user.name "gandalf02"
             - git config --global user.email "pradeepkumarmusham@gmail.com"
             - cd $HOME
-            - git clone https://github.com/gandalf02/Wizardstaff_EAS --branch=staging/hmp projectpur --depth=1
+            - git clone https://github.com/gandalf02/Wizardstaff_EAS --branch=g/hmp projectpur --depth=1
             - git clone https://github.com/kdrag0n/aarch64-elf-gcc compiler
             - git clone https://github.com/kdrag0n/arm-eabi-gcc 32bit
             - cd $KERNELDIR
