@@ -435,6 +435,12 @@ static struct alpha_pll_vco_tbl p_vco[] = {
 	VCO(0,  700000000, 1400000000),
 };
 
+/* Slewing plls won't allow to change vco_sel.	
+ * Hence will have only one vco table entry */	
+static struct alpha_pll_vco_tbl p_vco_8937[] = {	
+	VCO(1,  525000000, 1066000000),	
+};	
+
 static struct alpha_pll_clk gpll3_clk_src = {
 	.masks = &pll_masks_p,
 	.base = &virt_bases[GCC_BASE],
@@ -4419,7 +4425,7 @@ static int msm_gcc_probe(struct platform_device *pdev)
 		if (compat_bin3) {
 			if (speed_bin) {
 				gfx3d_clk_src.freq_tbl =
-					ftbl_gcc_oxili_gfx3d_clk_8940_500MHz;
+					ftbl_gcc_oxili_gfx3d_clk_8937_475MHz;
 				gfx3d_clk_src.c.fmax[VDD_DIG_SUPER_TUR] =
 								
 560000000;
