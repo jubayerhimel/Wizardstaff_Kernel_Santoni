@@ -645,10 +645,6 @@ KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os) $(call cc-disable-warning,maybe-unini
 else
 ifeq ($(cc-name),clang)
 KBUILD_CFLAGS	+= -O3
-else
-KBUILD_CFLAGS	+= -O2
-endif
-
 ifdef CONFIG_POLLY_CLANG
 KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-run-dce \
@@ -658,6 +654,9 @@ KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-detect-keep-going \
 		   -mllvm -polly-vectorizer=stripmine \
 		   -mllvm -polly-invariant-load-hoisting
+endif
+else
+KBUILD_CFLAGS   += -O2                                                                                                                                                  
 endif
 endif
 
