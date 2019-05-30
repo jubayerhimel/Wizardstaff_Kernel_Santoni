@@ -15,12 +15,12 @@ blocks:
             - cd $HOME
             - git clone https://github.com/gandalf02/Wizardstaff_EAS --branch=g/hmp projectpur --depth=1
             - git clone https://github.com/VRanger/dragontc clang
-            - git clone https://github.com/RaphielGang/aarch64-linux-gnu-8.x compiler
-            - git clone https://github.com/RaphielGang/arm-linux-gnueabi-8.x 32bit
+            - git clone https://github.com/kdrag0n/aarch64-elf-gcc compiler
+            - git clone https://github.com/kdrag0n/arm-eabi-gcc 32bit
             - cd $KERNELDIR
             - sudo apt-get install -y libfl2 bc
             - git clone https://github.com/gandalf02/scripts script
-            - bash script/clangscript
+            - bash script/treble.sh
             - cd $HOME
       env_vars:
         - name: STAFF
