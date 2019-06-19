@@ -165,7 +165,7 @@ static void new_touch(int x, int y) {
 	tap_time_pre = ktime_to_ms(ktime_get());
 	x_pre = x;
 	y_pre = y;
-	touch_nr++;
+	touch_nr = 1;
 }
 
 /* Doubletap2wake main function */
