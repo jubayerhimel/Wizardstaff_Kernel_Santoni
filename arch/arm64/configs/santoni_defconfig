@@ -1,5 +1,6 @@
 ####Wizardstaff feature##
 CONFIG_IOSCHED_ZEN=y
+CONFIG_BOEFFLA_WL_BLOCKER=y
 ####
 
 CONFIG_LOCALVERSION="-LITstaff"
