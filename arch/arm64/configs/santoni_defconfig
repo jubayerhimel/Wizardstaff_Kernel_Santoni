@@ -1,4 +1,8 @@
-CONFIG_LOCALVERSION="-Clarity"
+####Wizardstaff feature##
+CONFIG_IOSCHED_ZEN=y
+####
+
+CONFIG_LOCALVERSION="-LITstaff"
 # CONFIG_USELIB is not set
 CONFIG_AUDIT=y
 CONFIG_NO_HZ=y
