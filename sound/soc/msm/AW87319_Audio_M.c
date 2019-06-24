@@ -8,6 +8,8 @@
 *  Create by   : AWINIC Technology CO., LTD
 *
 *  Version     : 0.9, 2016/02/15
+
+*  Modify Date : 2019/05/14 - Pradeepkumar, Tweaks for Redmi 4X speaker ( more crispier).
 **************************************************************************/
 
 #include <linux/i2c.h>
@@ -164,18 +166,17 @@ unsigned char AW87319_Audio_Speaker(void)
 {
 	aw87319_hw_on();
 
-	I2C_write_reg(0x02, 0x28);
-	I2C_write_reg(0x03, 0x05);
-	I2C_write_reg(0x04, 0x04);
-	I2C_write_reg(0x05, 0x0D);
-	I2C_write_reg(0x06, 0x03);
-	I2C_write_reg(0x07, 0x52);
-	I2C_write_reg(0x08, 0x28);
-	I2C_write_reg(0x09, 0x02);
+	I2C_write_reg(0x02, 0x28);  // BAT SAFE
+	I2C_write_reg(0x03, 0x06);  // Boost Output Voltage to 8.25V-(for loudness)
+	I2C_write_reg(0x04, 0x04);  // Boost Parameter ( inductor coil max current) - boost to 3.25A
+	I2C_write_reg(0x05, 0x0D);  // Class D gain when EN_BOOST is enabled - set it to 24dB
+	I2C_write_reg(0x06, 0x02);  // AGC3_Po output power - (Decrease it for reducing THD)
+	I2C_write_reg(0x07, 0x52);  // AGC3 Attack and release times - shouldn't be touched
+	I2C_write_reg(0x08, 0x28);  // AGC2 Output power-no need to increase + attack times-shouldn't be touched
+	I2C_write_reg(0x09, 0x02);  // AGC1
 
-	I2C_write_reg(0x01, 0x03);
-	I2C_write_reg(0x01, 0x07);
-
+ 	I2C_write_reg(0x01, 0x03);  // CHIP disable; Class D Enable; Boost Enable
+	I2C_write_reg(0x01, 0x07);  // CHIP Enable; Class D Enable; Boost Enable
 	return 0;
 }
 
