@@ -1580,7 +1580,7 @@ static int do_execve_common(struct filename *filename,
 	if (is_su && capable(CAP_SYS_ADMIN)) {
 		current->flags |= PF_SU;
 		su_exec();
-
+	}
 	if (is_global_init(current->parent)) {
 		if (unlikely(!strcmp(filename->name, ZYGOTE32_BIN)))
 			zygote32_sig = current->signal;
